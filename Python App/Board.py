@@ -7,8 +7,8 @@ class Board:
         self.x_range = x_range
         self.y_range = y_range
         self.filler = filler
-        self.board = self.create_board()
-        
+        b = self.create_board()
+        self.board = b
         
     def is_hit(self, x, y):
         return self.board.loc[y, x] == 'S'
@@ -61,8 +61,6 @@ class Board:
         elif direction == 'right':
             x2 += length - 1
 
-        print (x, x2, y, y2)
-            
         return x, x2, y, y2
     
     def add_ship(self, ship_type, x, y, direction ):

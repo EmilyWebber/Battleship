@@ -1,13 +1,46 @@
+'''
+Inherits functions directly from Board; it's a sub-class. One way only on that functionality.
+'''
+
 import pandas as pd
+import Board
 
 class TrainingSet:
       
     def __init__(self, board):
-        self.training_set = self.create_features(board)
-
+        self.board = board
+        ts = self.create_features(board.get_board().values)
+        self.training_set = ts
+        self.create_training_set()
+        
     def get_set(self):
         return self.training_set
+    
+    def add_value(self, x, y, column):
+        ts_df = self.training_set
+        query = ts_df[ (ts_df[x] == 1) & (ts_df[y] == 1)]
+        idx = int(query.index.values[0])
+        ts_df.at[idx, column] = 1
+        self.training_set = ts_df
+       
+    def create_training_set(self):
+        b = self.board
+        df = b.get_board()
         
+        for y, row in df.iterrows():
+    
+            for x, col in row.iteritems():
+
+                # check x and y
+                if b.is_hit(x, y):
+
+                    self.add_value(x, y, column='Hit')
+
+                else:
+
+                    self.add_value(x, y, column = 'Miss')
+                    
+        return
         
     def create_features(self, board):
         '''
