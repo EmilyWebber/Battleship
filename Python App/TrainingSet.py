@@ -21,11 +21,15 @@ class TrainingSet:
         query = ts_df[ (ts_df[x] == 1) & (ts_df[y] == 1)]
         idx = int(query.index.values[0])
         ts_df.at[idx, column] = 1
-        self.training_set = ts_df
+#         self.training_set = ts_df
+        
+        return list(ts_df.iloc[idx, :].values)[:]
        
     def create_training_set(self):
         b = self.board
         df = b.get_board()
+        
+        rt = []
         
         for y, row in df.iterrows():
     
@@ -34,12 +38,15 @@ class TrainingSet:
                 # check x and y
                 if b.is_hit(x, y):
 
-                    self.add_value(x, y, column='Hit')
+                    new_row = self.add_value(x, y, column='Hit')
 
                 else:
 
-                    self.add_value(x, y, column = 'Miss')
+                    new_row = self.add_value(x, y, column = 'Miss')
                     
+                rt.append(new_row)
+        self.training_set = pd.DataFrame(rt)
+        
         return
         
     def create_features(self, board):
