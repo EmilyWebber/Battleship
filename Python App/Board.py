@@ -10,18 +10,44 @@ class Board:
         self.board = self.create_board()
         self.frame = self.create_features()
 
+    def add_ship(self, x1, x2, y1, y2):
+        board = self.board
+        rows = board[y1:y2]
+        space = rows[x1:x2]
+#         for each in space:
+#             if each == 0:
+#                 s
+        
     def print_board(self):
-        for row in self.board:
+        for row in self.board.values():
             print (row)  
 
     def create_board(self):
         rt = []
+        
         for x in range(self.y_range+1):
             new_row = []
             for y in range(self.x_range+1):
                 new_row.append(self.filler)
             rt.append(new_row)
-        return rt
+            
+        df = pd.DataFrame(rt)
+            
+        index = []
+        columns = []
+
+        for i in range(10):
+            base_x = 'x_{}'.format(i)
+            base_y = 'y_{}'.format(i)
+            index.append(base_y)
+            columns.append(base_x)
+
+        index.reverse()
+
+        df.index = index
+        df.columns = columns
+        
+        return df
 
     def get_frame(self):
         return self.frame
@@ -34,7 +60,7 @@ class Board:
         '''
         Given a square board, generates features from the board. Returns a pandas data frame
         '''
-        board = self.board
+        board = self.board.values
         n_columns = len(board) + len(board[0])
 
         rt = []
