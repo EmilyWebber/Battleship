@@ -8,15 +8,10 @@ class Board:
         self.y_range = y_range
         self.filler = filler
         self.board = self.create_board()
-        self.frame = self.create_features()
-
-    def add_ship(self, x1, x2, y1, y2):
-        board = self.board
-        rows = board[y1:y2]
-        space = rows[x1:x2]
-#         for each in space:
-#             if each == 0:
-#                 s
+        
+        
+    def is_hit(self, x, y):
+        return self.board.loc[y, x] == 'S'
         
     def print_board(self):
         for row in self.board.values():
@@ -49,45 +44,65 @@ class Board:
         
         return df
 
-    def get_frame(self):
-        return self.frame
-
     def get_board(self):
         return self.board
+    
+    def get_ship_dimentions(self, ship_type, x, y, direction):
+        x2, y2 = x, y
 
+        ships = {'carrier':5, 'battleship':4, 'cruiser':3, 'submarine':3, 'destroyer':2}
+        assert ship_type in list(ships.keys())
+        assert direction in ['up', 'right']
 
-    def create_features(self):
+        length = ships[ship_type]
+
+        if direction == 'up':
+            y2 += length - 1
+        elif direction == 'right':
+            x2 += length - 1
+
+        print (x, x2, y, y2)
+            
+        return x, x2, y, y2
+    
+    def add_ship(self, ship_type, x, y, direction ):
         '''
-        Given a square board, generates features from the board. Returns a pandas data frame
+        Make sure this is done from a 0 index space
         '''
-        board = self.board.values
-        n_columns = len(board) + len(board[0])
+        
+        board = self.board
 
-        rt = []
+        x1, x2, y1, y2 = self.get_ship_dimentions(ship_type, x, y, direction)
 
-        for y, row in enumerate(board):
+        up = (x1 == x2)
 
-            for x, col in enumerate(row):
+        # direction is up, select a column
+        if up:
+            rows = []
+            col = 'x_{}'.format(x1)
+            for y in range(y1, y2+1):
+                rows.append('y_{}'.format(y))
+            space = board.loc[rows, col]
 
-                # add one extra column for the label 
-                new_row = [0 for i in range(n_columns)]
+        # direction is right, select a row
+        elif y1 == y2:
+            row = 'y_{}'.format(y1)
+            col_1 = 'x_{}'.format(x1)
+            col_2 = 'x_{}'.format(x2)
+            space = board.loc[row, col_1:col_2]
 
-                new_row[x] = 1
-                new_row[y + len(board)] = 1
+        for each in space.values:
+            if each != 0:
+                b.print_board()
+                return 'Please try a different spot! This one is taken.'
 
-                rt.append(new_row)
-        df = pd.DataFrame(rt)
+        if up:
+            board.loc[rows, col] = 'S'
 
-        columns = []
+        else:
 
-        for c in range(n_columns):
-            if c < len(board):
-                str_base = "x_{}"
-            else:
-                str_base = 'y_{}'
-                c -= len(board)
-            columns.append(str_base.format(c))
+            board.loc[row, col_1:col_2] = 'S'
+            
+        self.board = board
 
-        df = pd.DataFrame(rt, columns = columns)
-
-        return df
+        return 
