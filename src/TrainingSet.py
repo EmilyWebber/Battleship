@@ -26,6 +26,9 @@ class TrainingSet:
         return list(ts_df.iloc[idx, :].values)[:]
        
     def create_training_set(self):
+        '''
+        Walks through a board, finds the points where there would be a hit, and labels it. 
+        '''
         b = self.board
         df = b.get_board()
         
